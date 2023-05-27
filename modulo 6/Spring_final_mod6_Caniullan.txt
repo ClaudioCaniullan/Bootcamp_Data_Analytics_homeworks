@@ -1,0 +1,437 @@
+------------- CREAR BASE DE DATOS----------
+-- Database: CINEPLUS
+
+-- DROP DATABASE IF EXISTS "CINEPLUS";
+
+CREATE DATABASE "CINEPLUS"
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Spanish_Chile.1252'
+    LC_CTYPE = 'Spanish_Chile.1252'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+
+
+
+
+
+----------- CREAR TABLAS -----------
+
+
+-- CREAR TABLA CIUDAD
+CREATE TABLE public."ciudad"
+(
+    id_ciudad serial,
+    nombre character varying,
+    CONSTRAINT ciudad_pkey PRIMARY KEY (id_ciudad)
+);
+
+ALTER TABLE IF EXISTS public."ciudad"
+    OWNER to postgres;
+
+
+
+-- CREAR TABLA CINE
+CREATE TABLE public."cine"
+(
+    id_cine serial,
+    id_ciudad integer,
+    nom_cine character varying,
+    dir_cine character varying,
+    CONSTRAINT cine_pkey PRIMARY KEY (id_cine),
+    CONSTRAINT cine_ciudad_fkey FOREIGN KEY (id_ciudad)
+        REFERENCES public."ciudad" (id_ciudad) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE IF EXISTS public."cine"
+    OWNER to postgres;
+
+
+
+-- CREAR TABLA TIPO DE SALA
+CREATE TABLE public."tipo_sala"
+(
+    id_tipo_sala serial,
+    nom_tsala character varying,
+    CONSTRAINT tipo_sala_pkey PRIMARY KEY (id_tipo_sala)
+);
+
+ALTER TABLE IF EXISTS public."tipo_sala"
+    OWNER to postgres;
+
+
+--CREAR TABLA DIRECTOR
+CREATE TABLE public."director"
+(
+    id_director serial,
+    nom_director character varying,
+    CONSTRAINT director_pkey PRIMARY KEY (id_director)
+);
+
+ALTER TABLE IF EXISTS public."director"
+    OWNER to postgres;
+
+
+
+-- CREAR TABLA CATEGORIA PELICULA
+CREATE TABLE public."cat_pelicula"
+(
+    id_cat_peli serial,
+    nom_categoria character varying,
+    CONSTRAINT cat_pelicula_pkey PRIMARY KEY (id_cat_peli)
+);
+
+ALTER TABLE IF EXISTS public."cat_pelicula"
+    OWNER to postgres;
+
+
+--CREAR TABLA 
+CREATE TABLE public."peliculas"
+(
+    id_peli serial,
+    nom_peli character varying,
+    id_director integer,
+    id_cat_peli integer,
+    anio_estreno date,
+    version integer,
+    CONSTRAINT peliculas_pkey PRIMARY KEY (id_peli),
+    CONSTRAINT peliculas_director_fkey FOREIGN KEY (id_director)
+        REFERENCES public."director" (id_director) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID,
+    CONSTRAINT peliculas_cat_pelicula_fkey FOREIGN KEY (id_cat_peli)
+        REFERENCES public."cat_pelicula" (id_cat_peli) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE IF EXISTS public."peliculas"
+    OWNER to postgres;
+
+
+
+--CREAR TABLA SALAS
+CREATE TABLE public."salas"
+(
+    id_sala serial,
+    numero_sala integer,
+    nom_sala character varying,
+    id_tipo_sala integer,
+    id_cine integer,
+    id_peli integer,
+    fecha date,
+    hora time with time zone,
+    CONSTRAINT sala_pkey PRIMARY KEY (id_sala),
+    CONSTRAINT sala_tipo_sala_fkey FOREIGN KEY (id_tipo_sala)
+        REFERENCES public."tipo_sala" (id_tipo_sala) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID,
+    CONSTRAINT sala_cine_fkey FOREIGN KEY (id_cine)
+        REFERENCES public."cine" (id_cine) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID,
+    CONSTRAINT sala_pelicula_fkey FOREIGN KEY (id_peli)
+        REFERENCES public."peliculas" (id_peli) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE IF EXISTS public."salas"
+    OWNER to postgres;
+
+
+
+-- CREAR TABLA ENTRADAS
+CREATE TABLE public."entradas"
+(
+    id_entrada serial,
+    id_sala integer,
+    fecha_emision date,
+    hora_emision time with time zone,
+    CONSTRAINT entrada_pkey PRIMARY KEY (id_entrada),
+    CONSTRAINT entradas_salas_fkey FOREIGN KEY (id_sala)
+        REFERENCES public."salas" (id_sala) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+);
+
+ALTER TABLE IF EXISTS public."entradas"
+    OWNER to postgres;
+
+
+
+
+---------------- COMPLETAR TABLAS -------------
+
+-- COMPLETAR TABLA CIUDAD
+insert into ciudad (Nombre) values ('Arica');
+insert into ciudad (Nombre) values ('Antofagasta');
+insert into ciudad (Nombre) values ('La Serena');
+insert into ciudad (Nombre) values ('Santiago');
+insert into ciudad (Nombre) values ('Concepcion');
+insert into ciudad (Nombre) values ('Los Angeles');
+insert into ciudad (Nombre) values ('Temuco');
+insert into ciudad (Nombre) values ('Valdivia');
+insert into ciudad (Nombre) values ('Puerto Montt');
+insert into ciudad (Nombre) values ('Punta Arenas');
+
+
+-- COMPLETAR TABLA CINE
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'Cinemax', '65 Morningstar Plaza');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (7, 'Cinemax', '3 Manufacturers Court');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'TotalCine', '46165 Forest Road');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (1, 'TotalCine', '053 Gulseth Court');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (4, 'Cinemax', '60 Hauk Avenue');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'PlanetaCine', '58 Pearson Junction');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'CorCine', '45 Harper Center');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (10, 'CorCine', '62389 Vernon Crossing');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'Cinemax', '99543 Vahlen Hill');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (4, 'CorCine', '87477 Nancy Lane');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (10, 'Cinemax', '7086 Welch Avenue');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (10, 'CorCine', '99 Eagan Court');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (5, 'CorCine', '8795 Valley Edge Trail');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (3, 'PlanetaCine', '8 Manitowish Park');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (6, 'TotalCine', '97937 Westend Hill');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (8, 'Cinemax', '15 Eastwood Hill');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (8, 'TotalCine', '416 Moulton Pass');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (9, 'PlanetaCiner', '59202 Arizona Circle');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (3, 'PlanetaCine', '4 Quincy Junction');
+insert into cine (id_ciudad, nom_cine, dir_cine) values (1, 'TotalCine', '71 Eastwood Way');
+
+
+----------- COMPLETAR TABLA TIPO SALA ------------
+insert into tipo_sala (nom_tsala) values('tradicional');
+insert into tipo_sala (nom_tsala) values ('full hd');
+insert into tipo_sala (nom_tsala) values ('3d');
+insert into tipo_sala (nom_tsala) values ('4d');
+insert into tipo_sala (nom_tsala) values ('Merrili');
+insert into tipo_sala (nom_tsala) values ('Kassia');
+insert into tipo_sala (nom_tsala) values ('Eugenie');
+insert into tipo_sala (nom_tsala) values ('Alleen');
+
+
+
+----- COMPLETAR TABLAR DIRECTOR ---------------
+insert into director (nom_director) values ('Charlson');
+insert into director (nom_director) values ('Beek');
+insert into director (nom_director) values ('Shippey');
+insert into director (nom_director) values ('Endrighi');
+insert into director (nom_director) values('Bernardot');
+insert into director (nom_director) values ('Cormode');
+insert into director (nom_director) values ('Coates');
+insert into director (nom_director) values ('Hillam');
+insert into director (nom_director) values ('Buffey');
+insert into director (nom_director) values ('Cleife');
+
+
+-------- COMPLETAR TABLA CAT_PELICULAS----------
+insert into cat_pelicula (nom_categoria) values ('accion');
+insert into cat_pelicula (nom_categoria) values ('drama');
+insert into cat_pelicula (nom_categoria) values ('romance');
+insert into cat_pelicula (nom_categoria) values ('ciencia ficcion');
+insert into cat_pelicula (nom_categoria) values ('comedia');
+
+
+--------- COMPLETAR TABLA PELICULAS ---------------
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Heldorado', 3, 1, '25/12/2003', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Backfire', 8, 3, '17/08/2002', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Belly 2: Millionaire Boyz Club', 7, 3, '08/05/2000', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Hand, The', 9, 4, '12/05/1998', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Time Bandits', 7, 3, '06/08/1999', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Mothlight', 3, 5, '25/02/2008', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Superdad', 5, 1, '10/06/1991', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('1990: The Bronx Warriors (1990: I guerrieri del Bronx)', 2, 1, '01/03/1988', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('All the Fine Young Cannibals', 9, 4, '18/05/2016', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('American Mullet', 8, 2, '03/12/2021', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Little Caesar', 7, 2, '13/07/1998', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Temple Grandin', 6, 1, '28/01/2018', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Three Came Home', 1, 4, '27/12/2016', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Pearls of the Deep (Perlicky na dne)', 4, 2, '28/05/1992', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('The Case of the Curious Bride', 3, 3, '29/08/2018', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Go, Go Second Time Virgin (Yuke yuke nidome no shojo)', 6, 1, '28/02/1996', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('My Last Day Without You (Nie mehr ohne Dich)', 4, 2, '03/06/2014', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Melbourne', 5, 5, '04/02/1996', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('D3: The Mighty Ducks', 6, 3, '18/11/2018', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Crude', 7, 3, '29/12/2015', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Fugitive Kind, The', 1, 3, '07/02/1987', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Confucian Confusion, A (Du li shi dai)', 3, 4, '09/02/2007', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Lotta på Bråkmakargatan', 10, 2, '21/02/2011', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Days of Heaven', 8, 2, '21/07/2003', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Thaw, The', 7, 4, '05/08/1996', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Shoot the Moon', 4, 5, '18/05/2020', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Ernest in the Army', 1, 1, '26/07/2017', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('The Boy Who Cried Werewolf', 7, 4, '26/11/2013', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Rugrats in Paris: The Movie', 8, 5, '06/04/1990', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('8th Wonderland', 4, 2, '06/07/1983', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Runaway', 3, 3, '06/06/2007', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Three Worlds (Trois mondes)', 1, 3, '05/12/2022', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Camouflage (Barwy ochronne)', 10, 5, '06/09/2003', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('God''s Country', 4, 5, '05/08/1984', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Bells, The', 4, 2, '29/05/2011', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('New Land, The (Nybyggarna)', 4, 2, '05/02/1981', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Manic', 2, 2, '04/11/2016', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Spencer''s Mountain', 6, 2, '20/08/2019', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('OH in Ohio, The', 5, 3, '30/05/2000', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Monster in Paris, A (Un monstre à Paris)', 8, 4, '14/09/2010', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Torn', 9, 1, '07/02/2005', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Love in Bloom', 5, 3, '02/02/2019', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Bingo Long Traveling All-Stars & Motor Kings, The', 5, 1, '21/07/1996', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Superproduction (Superprodukcja)', 10, 1, '30/08/2009', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Love on the Run (Amour en fuite, L'')', 9, 2, '22/05/2002', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('I''ll See You in My Dreams', 8, 4, '16/05/2006', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Rambo: First Blood Part II', 10, 3, '24/05/1986', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Obsessed', 4, 5, '01/11/1991', 2);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Willow Tree, The (Beed-e majnoon)', 7, 1, '02/04/1998', 1);
+insert into peliculas (nom_peli, id_director, id_cat_peli, anio_estreno, version) values ('Chair, The', 1, 1, '25/05/1997', 2);
+
+
+----------- COMPLETAR TABLA SALAS ------------
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (4, 'Peptic Relief', 3, 28, '07/06/2022', '4:37');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (5, 'Booty Goo', 5, 29, '29/11/2022', '0:38');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (3, 'Oxycodone Hydrochloride', 1, 33, '11/10/2022', '5:16');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Hypericum Perforatum 30c', 2, 32, '22/07/2022', '6:43');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'ROBITUSSIN PEAK COLD NASAL RELIEF', 4, 6, '17/10/2022', '9:25');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (4, 'METOPROLOL SUCCINATE', 8, 29, '04/10/2022', '1:30');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'SBS 40', 4, 25, '21/04/2023', '9:00');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (5, 'Naloxone Hydrochloride', 6, 39, '03/05/2023', '8:23');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (3, 'OPANA', 10, 25, '29/06/2022', '0:43');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Smart Sense Isopropyl Alcohol Wipes', 2, 40, '11/04/2023', '9:28');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (3, 'Miconazole Nitrate', 8, 26, '09/09/2022', '8:54');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (5, 'INFANTS GAS RELIEF', 3, 16, '07/12/2022', '4:26');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (5, 'ECOSAVE JAPANESE CHERRY BLOSSOM SOAP ANTIBACTERIAL HAND SOAP', 10, 36, '18/12/2022', '0:29');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (3, 'Action Chemical Antibac Clear', 4, 37, '14/10/2022', '9:17');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'SOOTHING AND MOISTURE ALOE VERA 80 PERCENT EMULSION', 6, 17, '31/08/2022', '0:52');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Levothyroxine Sodium', 7, 34, '21/04/2023', '6:12');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'Cardizem LA', 8, 22, '09/05/2022', '1:31');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (4, 'nevirapine', 5, 23, '05/05/2022', '8:47');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Adenoscan', 9, 15, '15/05/2022', '7:40');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (5, 'Guaifenesin and Codeine Phosphate', 4, 3, '02/05/2022', '2:36');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'Fosinopril Sodium and Hydrochlorothiazide', 9, 22, '05/12/2022', '9:40');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Simvastatin', 9, 9, '16/10/2022', '4:21');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'Extra Strength Pain Relief', 4, 22, '01/12/2022', '0:06');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Axe', 8, 20, '29/10/2022', '5:46');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'OPANA', 3, 14, '19/09/2022', '0:35');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'Loratadine', 3, 5, '05/04/2023', '0:55');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Gambil Oak', 3, 30, '13/07/2022', '3:45');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (1, 'Gabapentin', 3, 41, '04/11/2022', '2:37');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (2, 'Rivastigmine Tartrate', 3, 39, '21/01/2023', '0:55');
+insert into salas (numero_sala, nom_sala, id_cine, id_peli, fecha, hora) values (3, 'LEVOFLOXACIN', 6, 24, '14/06/2022', '4:20');
+
+
+
+-------- COMPLETAR TABLA ENTRADAS ---------------
+insert into entradas (id_sala, fecha_emision, hora_emision) values (7, '16/12/2022', '6:23');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (24, '07/06/2022', '6:19');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (16, '08/09/2022', '3:48');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (20, '26/11/2022', '3:33');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (14, '24/02/2023', '7:09');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (10, '15/11/2022', '1:25');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (11, '07/03/2023', '8:09');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (27, '10/09/2022', '8:49');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (15, '11/04/2023', '2:58');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (29, '02/11/2022', '4:19');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (24, '13/11/2022', '8:14');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (17, '11/03/2023', '9:08');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (17, '27/07/2022', '5:58');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (16, '28/07/2022', '7:44');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (14, '17/05/2022', '4:59');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (28, '09/01/2023', '3:46');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (26, '12/11/2022', '6:42');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (11, '03/12/2022', '0:38');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (10, '30/08/2022', '2:29');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (1, '04/08/2022', '8:46');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (26, '03/09/2022', '4:42');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (17, '06/03/2023', '1:44');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (21, '13/05/2022', '4:01');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (5, '10/12/2022', '3:08');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (28, '10/11/2022', '6:06');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (11, '28/01/2023', '0:22');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (2, '13/11/2022', '6:55');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (6, '05/05/2023', '5:27');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (18, '19/07/2022', '8:25');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (25, '03/03/2023', '8:56');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (26, '19/11/2022', '2:48');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (14, '07/08/2022', '3:13');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (21, '25/11/2022', '0:52');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (21, '27/11/2022', '3:14');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (19, '14/11/2022', '2:39');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (9, '14/10/2022', '2:22');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (18, '15/04/2023', '7:26');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (4, '15/05/2022', '9:15');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (22, '09/04/2023', '7:38');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (7, '09/11/2022', '3:53');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (9, '19/01/2023', '4:20');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (24, '17/06/2022', '3:16');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (5, '15/01/2023', '5:12');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (9, '24/11/2022', '1:58');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (25, '22/01/2023', '0:20');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (8, '06/11/2022', '4:40');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (19, '19/09/2022', '4:53');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (25, '01/08/2022', '5:28');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (29, '24/10/2022', '3:41');
+insert into entradas (id_sala, fecha_emision, hora_emision) values (23, '27/12/2022', '1:31');
+
+
+
+
+
+------------- Respuestas a las consultas SQL -------------
+
+-- consulta a)
+
+select ciu.nombre as "Ciudad", cin.nom_cine "Cine", 
+sala.nom_sala as "Tipo de Sala", 
+peli.nom_peli as "Pelicula"
+from ciudad as ciu
+inner join cine as cin on ciu.id_ciudad = cin.id_ciudad
+inner join salas as sala on sala.id_cine = cin.id_cine
+inner join peliculas as peli on peli.id_peli = sala.id_peli
+order by ciu.nombre asc, cin.nom_cine asc
+
+
+-- consulta b)
+
+select cin.nom_cine "Cine", 
+count(sala.id_tipo_sala) as "Cantidad Tipo de Sala"
+from cine as cin
+inner join salas as sala on sala.id_cine = cin.id_cine
+group by sala.id_tipo_sala, cin.nom_cine
+order by cin.nom_cine asc
+
+
+
+-- consulta c)
+
+select 
+cin.nom_cine "Cine", 
+cat.nom_categoria as "Categoría",
+count(cat.id_cat_peli) as "Cantidad de Películas"
+from cine as cin
+inner join salas as sala on sala.id_cine = cin.id_cine
+inner join peliculas as pel on pel.id_peli = sala.id_peli
+inner join cat_pelicula as cat on cat.id_cat_peli = pel.id_cat_peli
+group by cin.nom_cine, cat.nom_categoria
+order by cin.nom_cine asc, cat.nom_categoria asc
+
+
+
+
+
+
+
+
+
+
+
